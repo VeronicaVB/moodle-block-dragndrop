@@ -43,36 +43,37 @@ define(['jquery'], function ($) {
                         array[index].addEventListener("dragstart", function (evt) {
 
                             if (evt.dataTransfer !== null) {
-                                evt.dataTransfer.setData("DownloadURL", array[index].getAttribute("data-download-url"));
-                                //var mtype = (array[index].getAttribute("data-download-url")).split(":")[0];
-                                //evt.dataTransfer.setData(mtype,array[index].getAttribute("data-download-url"));
-                                evt.dataTransfer.effectAllowed = "move";
+//                                //evt.dataTransfer.setData("DownloadURL", array[index].getAttribute("data-download-url"));
+//                                //var mtyped = (array[index].getAttribute("data-download-url")).split(":")[0];
+//                                //evt.dataTransfer.setData(mtype,array[index].getAttribute("data-download-url"));
+//                                evt.dataTransfer.effectAllowed = "copyMove";
+//
+//                                let myfile = {
+//                                    path: array[index].getAttribute("data-url")
+//                                };
+//                                sessionStorage.setItem(index, JSON.stringify(myfile));
 
-                                let myfile = {
-                                    path: array[index].getAttribute("data-url")
-                                };
-                                sessionStorage.setItem(index, JSON.stringify(myfile));
+
+                                $.ajax({
+                                    async: false,
+                                    complete: function () {
+                                        
+                                        evt.dataTransfer.setData("DownloadURL", array[index].getAttribute("data-download-url"));
+                                    },
+                                    error: function (xhr) {
+                                        if (xhr.status == 404) {
+                                            xhr.abort();
+                                        }
+                                    },
+                                    type: 'GET',
+                                    timeout: 3000,
+                                    url: array[index].getAttribute("data-url")
+                                });
                             }
-
-                        }, false);
-
-                        array[index].addEventListener("dragenter", function (evt) {
-                            console.log('Entro en Dropzone');
-                            console.log(JSON.parse(sessionStorage.getItem(index)));
-                            //console.log(evt.dataTransfer.files);                          
-                        }, false);
-
-                        array[index].addEventListener("dragend", function (evt) {
-                            console.log('Entro en dragend');
-                            evt.dataTransfer.setData("DownloadURL", array[index].getAttribute("data-download-url"));
-                           alert(array[index].getAttribute("data-url"));
-                           new URL(array[index].getAttribute("data-url"));
-                            
 
                         }, false);
                     });
         }
-
     }
 
     return {
